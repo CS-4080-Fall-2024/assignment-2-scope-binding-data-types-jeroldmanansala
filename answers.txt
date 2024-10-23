@@ -1,0 +1,106 @@
+1.
+Leftmost Derivation
+Statement → Assignment
+          → Identifier = Expression
+          → A = Expression
+          → A = Term
+          → A = Term * Factor
+          → A = Factor * Factor
+          → A = Identifier * Factor
+          → A = B * Factor
+          → A = B * (Expression)
+          → A = B * (Term)
+          → A = B * (Term * Factor)
+          → A = B * (Factor * Factor)
+          → A = B * (Identifier * Factor)
+          → A = B * (C * Factor)
+          → A = B * (C * (Expression))
+          → A = B * (C * (Expression + Term})
+          → A = B * (C * (Term + Term})
+          → A = B * (C * (Factor + Term})
+          → A = B * (C * (Identifier + Term})
+          → A = B * (C * (A + Term))
+          → A = B * (C * (A + Factor))
+          → A = B * (C * (A + Identifier))
+          → A = B * (C * (A + B))
+
+Parse Tree
+                      Statement
+                          |
+                      Assignment
+                          |
+          _____________________________
+          |                           |
+    Identifier (A)                 Expression
+                                         |
+                                        Term
+                                       /    \
+                             Term           Factor
+                             /                |
+                    Identifier (B)    (Expression)
+                                            |
+                                           Term
+                                          /    \
+                                 Term           Factor
+                                 /                |
+                        Identifier (C)   (Expression)
+                                               |
+                                           Expression + Term
+                                           /           \
+                                   Identifier (A)   Term
+                                                       |
+                                                 Identifier (B)
+
+2.
+int u = 42;
+int v = 69;
+int w = 17;
+
+proc add( z:int )
+u := v + u + z;
+
+proc bar( fun:proc )
+int u := w;
+fun(v);
+
+proc foo( x:int, w:int )
+int v := x;
+bar(add);
+
+main
+foo(u, 13);
+print(u);
+end;
+
+
+a: Using Static Scope, what is printed to the screen?
+= 180
+
+Static scope means that the scope is determined by their placement in the code structure
+v in foo scope = 42
+u from bar = 17
+add; static scope uses global values of v = 69 and u = 42
+z comes from global variable v =69
+69+42+69
+
+
+b. Using Dynamic Scope with Deep Binding, what is printed to the screen?
+= 126
+
+Scope is determined by the time the procedure is passed as argument 
+v in foo scope = 42; foo localizes v
+bar; u = 17
+add; v = 42 because of deep binding, was assigned 42 in foo scope
+z = 42; takes the v that was passed before it
+u = 42 due to deep binding
+
+
+c. Using Dynamic Scope with Shallow Binding, what is printed to the screen?
+= 42
+
+Scope is determined by the time the procedure is called
+v in foo scope = 42
+w=13
+add; v=69 from global
+when is add executed, shallow binding uses u from bar = 42
+u is local to bar; not modified in global
